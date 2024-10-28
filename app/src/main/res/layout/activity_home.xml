@@ -4,15 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Home">
+    tools:context=".Home"
+    android:background="@drawable/inicio">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="BIENVENIDO A LA TIENDA ONLINE"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:textColor="#1B0F30"
-        android:textStyle="bold"
-        android:textSize="20dp" />
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/botonusuario"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp"
+            android:backgroundTint="@color/black"
+            android:padding="10dp"
+            android:text="USUARIO"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/botonadmin"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:textStyle="bold"
+            android:backgroundTint="@color/white"
+            android:padding="10dp"
+            android:text="ADMINISTRADOR"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
 </RelativeLayout>

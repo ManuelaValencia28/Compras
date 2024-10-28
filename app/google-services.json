@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1065142455277",
+    "project_id": "carritobl-def17",
+    "storage_bucket": "carritobl-def17.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065142455277:android:27b8af5e1c95fc0c6835e4",
+        "android_client_info": {
+          "package_name": "com.example.compras"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA02vI0GPaGCNJ2FPvO-k4nwO7vBgQyGyk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

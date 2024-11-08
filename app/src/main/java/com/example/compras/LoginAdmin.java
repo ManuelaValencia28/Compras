@@ -148,6 +148,7 @@ public class LoginAdmin extends AppCompatActivity {
     private void EnviaralaPrincipal() {
         Intent intent = new Intent(LoginAdmin.this, PrincipalActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("papel", "administrador");
         intent.putExtra("Phone", phoneNumber);
         startActivity(intent);
         finish();

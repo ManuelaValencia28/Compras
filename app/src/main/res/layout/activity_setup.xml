@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SetupActivity">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/encabezado"
+        android:text="COMPLETA TUS DATOS"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
+        android:background="@color/azulneon"
+        android:textColor="@color/morado"
+        android:padding="15dp"
+        android:textStyle="bold|italic"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:id="@+id/setup_imagen"
+        android:src="@drawable/logo"
+        android:layout_below="@id/encabezado"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        app:civ_border_color="@color/azulneon"
+        app:civ_border_width="2dp"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setup_nombre"
+        android:layout_below="@+id/setup_imagen"
+        android:background="@drawable/textos"
+        android:layout_margin="20dp"
+        android:padding="10dp"
+        android:hint="Ingrese su nombre"
+        android:inputType="text"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setup_direccion"
+        android:layout_below="@+id/setup_nombre"
+        android:background="@drawable/textos"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:padding="10dp"
+        android:hint="Ingrese su direccion"
+        android:inputType="text"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setup_telefono"
+        android:layout_below="@+id/setup_direccion"
+        android:background="@drawable/textos"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:hint="Ingrese su Telefono"
+        android:inputType="phone"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setup_ciudad"
+        android:layout_below="@+id/setup_telefono"
+        android:background="@drawable/textos"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:hint="Ingrese su ciudad"
+        android:inputType="text"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setup_boton"
+        android:layout_below="@+id/setup_ciudad"
+        android:background="@color/botones"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:textSize="18dp"
+        android:text="Continuar"
+        />
+
+
+</RelativeLayout>

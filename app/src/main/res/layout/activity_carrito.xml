@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/id1"
-        android:background="@color/morado"
+        android:background="@color/botones"
         android:layout_alignParentTop="true"
         >
 
@@ -21,7 +21,7 @@
             android:id="@+id/precio_total"
             android:text="Total: $$$"
             android:textAlignment="center"
-            android:textColor="@color/azulneon"
+            android:textColor="@color/white"
             android:textSize="25dp"
             android:layout_marginTop="7dp"
 
@@ -33,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/mensaje1"
-        android:textColor="@color/azulneon"
+        android:textColor="@color/black"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:textAlignment="center"
@@ -56,8 +56,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/siguiente_proceso"
         android:layout_alignParentBottom="true"
-        android:background="@color/botones"
-        android:text="Continuar"
+        android:backgroundTint="@color/botones"
+        android:text="CONTINUAR"
         android:textColor="@color/white"
         android:textSize="20dp"
         android:layout_margin="10dp"

@@ -13,10 +13,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/encabezado"
         android:text="COMPLETA TUS DATOS"
+        android:textSize="18dp"
         android:layout_centerHorizontal="true"
         android:textAlignment="center"
-        android:background="@color/azulneon"
-        android:textColor="@color/morado"
+        android:background="@color/black"
+        android:textColor="@color/white"
         android:padding="15dp"
         android:textStyle="bold|italic"/>
 
@@ -28,7 +29,7 @@
         android:layout_below="@id/encabezado"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        app:civ_border_color="@color/azulneon"
+        app:civ_border_color="@color/black"
         app:civ_border_width="2dp"
         />
 
@@ -90,13 +91,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/setup_boton"
         android:layout_below="@+id/setup_ciudad"
-        android:background="@color/botones"
+        android:backgroundTint="#8F83CA"
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
         android:padding="10dp"
         android:textSize="18dp"
-        android:text="Continuar"
+        android:text="CONTINUAR"
         />
 
 

@@ -15,7 +15,7 @@
             android:id="@+id/toolBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/azulneon"
+            android:background="@color/black"
             android:popupTheme="@style/AppTheme.PopupOverlay"
             tools:targetApi="lollipop"/>
 
@@ -29,7 +29,7 @@
         android:id="@+id/fab"
         android:layout_gravity="bottom|end"
         android:layout_margin="15dp"
-        android:backgroundTint="@color/azulneon"
+        android:backgroundTint="@color/botones"
         android:src="@drawable/car"
         />
 

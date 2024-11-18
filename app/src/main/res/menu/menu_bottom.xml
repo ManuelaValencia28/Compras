@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Item" />
-    <item android:title="Item" />
-    <item android:title="Item" />
-    <item android:title="Item" />
+    <item
+        android:id="@+id/fragmentoUno"
+        android:title="Inicio"
+        android:icon="@drawable/ic_home_24"/>
+    <item
+        android:id="@+id/fragmentoDos"
+        android:title="Inventario"
+        android:icon="@drawable/ic_lista_24"/>
+    <item
+        android:id="@+id/fragmentoTres"
+        android:title="Perfil"
+        android:icon="@drawable/ic_person"/>
+    <item
+        android:id="@+id/fragmentoCuatro"
+        android:title="Categorias"
+        android:icon="@drawable/ic_table"/>
 </menu>

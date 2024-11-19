@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -71,40 +72,65 @@ public class PerfilActivity extends AppCompatActivity {
         UserRef.child(CurrentUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                try {
+                    if (snapshot.exists()) {
+                        // Obtener los valores
+                        String nombres = snapshot.child("nombre").getValue(String.class);
+                        String direccions = snapshot.child("direccion").getValue(String.class);
+                        String ciudads = snapshot.child("ciudad").getValue(String.class);
+                        String telefonos = snapshot.child("telefono").getValue(String.class);
+                        String imagens = snapshot.child("imagen").getValue(String.class);
 
-                if(snapshot.exists() && snapshot.hasChild("imagen")){
-                    String nombreS = snapshot.child("nombre").getValue().toString();
-                    String direccionS = snapshot.child("direccion").getValue().toString();
-                    String ciudadS = snapshot.child("ciudad").getValue().toString();
-                    String telefonoS = snapshot.child("telefono").getValue().toString();
-                    String imagenS = snapshot.child("imagen").getValue().toString();
-                    Picasso.get()
-                            .load(imagenS)
-                            .placeholder(R.drawable.logo)
-                            .into(imagen);
+                        // Logs para depuración
+                        Log.d("Firebase", "Nombre: " + nombres);
+                        Log.d("Firebase", "Dirección: " + direccions);
+                        Log.d("Firebase", "Ciudad: " + ciudads);
+                        Log.d("Firebase", "Teléfono: " + telefonos);
+                        Log.d("Firebase", "Imagen URL: " + imagens);
 
-                    nombre.setText(nombreS);
-                    direccion.setText(direccionS);
-                    ciudad.setText(ciudadS);
-                    telefono.setText(telefonoS);
-                }else if(snapshot.exists()){
-                    String nombreS = snapshot.child("nombre").getValue().toString();
-                    String direccionS = snapshot.child("direccion").getValue().toString();
-                    String ciudadS = snapshot.child("ciudad").getValue().toString();
-                    String telefonoS = snapshot.child("telefono").getValue().toString();
-                    String imagenS = snapshot.child("imagen").getValue().toString();
-                    nombre.setText(nombreS);
-                    direccion.setText(direccionS);
-                    ciudad.setText(ciudadS);
-                    telefono.setText(telefonoS);
+                        // Si la URL de la imagen no es nula ni vacía
+                        if (imagens != null && !imagens.isEmpty()) {
+                            Picasso.get()
+                                    .load(imagens)
+                                    .placeholder(R.drawable.logo)  // Cambia 'logo' por 'image' si es necesario
+                                    .into(imagen);
+                        } else {
+                            imagen.setImageResource(R.drawable.logo); // Imagen predeterminada
+                        }
+
+                        // Establecer los valores de texto
+                        nombre.setText(nombres != null ? nombres : "No disponible");
+                        direccion.setText(direccions != null ? direccions : "No disponible");
+                        ciudad.setText(ciudads != null ? ciudads : "No disponible");
+                        telefono.setText(telefonos != null ? telefonos : "No disponible");
+
+                    } else {
+                        // Si el snapshot no existe, puedes manejar esto aquí.
+                        imagen.setImageResource(R.drawable.logo); // Imagen predeterminada
+                        nombre.setText("No disponible");
+                        direccion.setText("No disponible");
+                        ciudad.setText("No disponible");
+                        telefono.setText("No disponible");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // Si hay algún error, establece una imagen por defecto
+                    imagen.setImageResource(R.drawable.logo); // Cambia 'logo' por 'image' si es necesario
+                    nombre.setText("Error");
+                    direccion.setText("Error");
+                    ciudad.setText("Error");
+                    telefono.setText("Error");
                 }
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // Manejo del error de cancelación
+
             }
         });
+
+
 
 
         guardar.setOnClickListener(view -> GuardarInformacion());

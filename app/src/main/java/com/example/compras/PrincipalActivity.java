@@ -1,14 +1,23 @@
 package com.example.compras;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.Navigation;
 
+import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -18,7 +27,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.ktx.Firebase;
 
-public class PrincipalActivity extends AppCompatActivity {
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class PrincipalActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth auth;
     private String CurrentUserId;
@@ -37,6 +48,24 @@ public class PrincipalActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         CurrentUserId  =auth.getCurrentUser().getUid();
         userRef= FirebaseDatabase.getInstance().getReference().child("Usuarios");
+
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+          this, drawerLayout,R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView nombreHeader = (TextView) headerView.findViewById(R.id.usuario_nombre_perfil);
+        CircleImageView imagenHeader = (CircleImageView) headerView.findViewById(R.id.usuario_imagen_perfil);
+
+
+
     }
 
     @Override
@@ -47,6 +76,16 @@ public class PrincipalActivity extends AppCompatActivity {
             enviarLogin();
         }else{
             verificarUsuarioExistente();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }else{
+            super.onBackPressed();
         }
     }
 
@@ -71,25 +110,34 @@ public class PrincipalActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-       super.onOptionsItemSelected(item);
-       if(item.getItemId()==R.id.nav_carrito){
+       return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+       int id= item.getItemId();
+
+        if(id ==R.id.nav_carrito){
             activityCarrito();
-       }
-       if(item.getItemId()==R.id.nav_categorias){
-           activityCategorias();
-       }
-       if(item.getItemId()==R.id.nav_buscar){
-           activityBuscar(); 
-       }
-       if(item.getItemId()==R.id.nav_perfil){
-           activityPerfil();
-       }
-       if(item.getItemId()==R.id.nav_salir){
+        }
+        else if(id ==R.id.nav_categorias){
+            activityCategorias();
+        }
+        else if(id ==R.id.nav_buscar){
+            activityBuscar();
+        }
+        else if(id ==R.id.nav_perfil){
+            activityPerfil();
+        }
+        else if(id ==R.id.nav_salir){
             auth.signOut();
             enviarLogin();
-       }
+        }
 
-       return true;
+        DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+
     }
 
     private void activityCarrito() {
@@ -126,4 +174,6 @@ public class PrincipalActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+
 }

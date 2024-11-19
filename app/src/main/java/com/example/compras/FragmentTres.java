@@ -35,7 +35,6 @@ import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-
 public class FragmentTres extends Fragment {
 
     private View fragmento;
@@ -56,58 +55,53 @@ public class FragmentTres extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        fragmento=inflater.inflate(R.layout.fragment_tres, container, false);
+        fragmento = inflater.inflate(R.layout.fragment_tres, container, false);
 
         auth = FirebaseAuth.getInstance();
-        nombre = fragmento.findViewById(R.id.perfilF_nombre);
-        ciudad = fragmento.findViewById(R.id.perfilF_ciudad);
-        direccion = fragmento.findViewById(R.id.perfilF_direccion);
-        telefono = fragmento.findViewById(R.id.perfilF_telefono);
         CurrentUserId = auth.getCurrentUser().getUid();
         UserRef = FirebaseDatabase.getInstance().getReference().child("Admin");
         dialog = new ProgressDialog(getContext());
+
+        nombre = (EditText) fragmento.findViewById(R.id.perfilF_nombre);
+        ciudad = (EditText) fragmento.findViewById(R.id.perfilF_ciudad);
+        direccion = (EditText) fragmento.findViewById(R.id.perfilF_direccion);
+        telefono = (EditText) fragmento.findViewById(R.id.perfilF_telefono);
+        guardar = (Button) fragmento.findViewById(R.id.perfilF_boton);
+        imagen = (CircleImageView) fragmento.findViewById(R.id.perfilF_imagen);
+
         UserImagenPerfil = FirebaseStorage.getInstance().getReference().child("Perfil");
-        guardar = fragmento.findViewById(R.id.perfilF_boton);
-        imagen = fragmento.findViewById(R.id.perfilF_imagen);
 
         UserRef.child(CurrentUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                if(snapshot.exists() && snapshot.hasChild("imagen")){
-                    String nombreS = snapshot.child("nombre").getValue().toString();
-                    String direccionS = snapshot.child("direccion").getValue().toString();
-                    String ciudadS = snapshot.child("ciudad").getValue().toString();
-                    String telefonoS = snapshot.child("telefono").getValue().toString();
-                    String imagenS = snapshot.child("imagen").getValue().toString();
-                    Picasso.get()
-                            .load(imagenS)
-                            .placeholder(R.drawable.logo)
-                            .into(imagen);
+                if (snapshot.exists()) {
+                    // Obtén los valores del snapshot con comprobación nula
+                    String nombres = snapshot.child("nombre").getValue(String.class);
+                    String direccions = snapshot.child("direccion").getValue(String.class);
+                    String ciudads = snapshot.child("ciudad").getValue(String.class);
+                    String telefonos = snapshot.child("telefono").getValue(String.class);
+                    String imagens = snapshot.child("imagen").getValue(String.class);
 
-                    nombre.setText(nombreS);
-                    direccion.setText(direccionS);
-                    ciudad.setText(ciudadS);
-                    telefono.setText(telefonoS);
-                }else if(snapshot.exists()){
-                    String nombreS = snapshot.child("nombre").getValue().toString();
-                    String direccionS = snapshot.child("direccion").getValue().toString();
-                    String ciudadS = snapshot.child("ciudad").getValue().toString();
-                    String telefonoS = snapshot.child("telefono").getValue().toString();
-                    String imagenS = snapshot.child("imagen").getValue().toString();
-                    nombre.setText(nombreS);
-                    direccion.setText(direccionS);
-                    ciudad.setText(ciudadS);
-                    telefono.setText(telefonoS);
+                    // Si el valor de "imagen" es nulo o vacío, carga una imagen por defecto
+                    if (imagens != null && !imagens.isEmpty()) {
+                        Picasso.get().load(imagens).placeholder(R.drawable.logo).into(imagen);
+                    } else {
+                        Picasso.get().load(R.drawable.logo).into(imagen);
+                    }
+
+                    // Asigna los valores a los EditText si no son nulos
+                    nombre.setText(nombres != null ? nombres : "");
+                    direccion.setText(direccions != null ? direccions : "");
+                    ciudad.setText(ciudads != null ? ciudads : "");
+                    telefono.setText(telefonos != null ? telefonos : "");
                 }
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-
 
         guardar.setOnClickListener(view -> GuardarInformacion());
 
@@ -169,24 +163,24 @@ public class FragmentTres extends Fragment {
         String ciudads = ciudad.getText().toString();
         String phones = telefono.getText().toString();
 
-        if(TextUtils.isEmpty(nombres)){
+        if (TextUtils.isEmpty(nombres)) {
             Toast.makeText(getContext(), "Ingrese el nombre.", Toast.LENGTH_SHORT).show();
         }
-        if(TextUtils.isEmpty(direccions)){
+        if (TextUtils.isEmpty(direccions)) {
             Toast.makeText(getContext(), "Ingrese la direccion.", Toast.LENGTH_SHORT).show();
         }
-        if(TextUtils.isEmpty(ciudads)){
+        if (TextUtils.isEmpty(ciudads)) {
             Toast.makeText(getContext(), "Ingrese la ciudad.", Toast.LENGTH_SHORT).show();
         }
-        if(TextUtils.isEmpty(phones)){
+        if (TextUtils.isEmpty(phones)) {
             Toast.makeText(getContext(), "Ingrese su número.", Toast.LENGTH_SHORT).show();
-        }else{
+        } else {
             dialog.setTitle("Guardando");
             dialog.setMessage("Por favor espere...");
-            dialog.show();;
+            dialog.show();
             dialog.setCanceledOnTouchOutside(true);
 
-            HashMap map = new HashMap();
+            HashMap<String, Object> map = new HashMap<>();
             map.put("Nombre", nombres);
             map.put("Direccion", direccions);
             map.put("Ciudad", ciudads);
@@ -196,12 +190,12 @@ public class FragmentTres extends Fragment {
             UserRef.child(CurrentUserId).updateChildren(map).addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
-                    if(task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         EnviarAlInicio();
                         dialog.dismiss();
-                    }else{
+                    } else {
                         String mensaje = task.getException().toString();
-                        Toast.makeText(getContext(), "Error: "+mensaje, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error: " + mensaje, Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
                 }

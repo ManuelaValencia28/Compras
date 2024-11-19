@@ -21,6 +21,9 @@
         android:theme="@style/Theme.Compras"
         tools:targetApi="31">
         <activity
+            android:name=".AgregarproductoActivity"
+            android:exported="false" />
+        <activity
             android:name=".PerfilActivity"
             android:exported="false" />
         <activity

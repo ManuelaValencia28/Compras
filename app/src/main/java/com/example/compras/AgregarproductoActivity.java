@@ -1,5 +1,6 @@
 package com.example.compras;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,16 +8,26 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class AgregarproductoActivity extends AppCompatActivity {
 
@@ -29,7 +40,7 @@ public class AgregarproductoActivity extends AppCompatActivity {
     private StorageReference ProductoImagenRef;
     private DatabaseReference ProductoRef;
     private ProgressDialog dialog;
-    private String Categoria, NombrePro, Desc, Precio ;
+    private String Categoria, NombrePro, Desc, Precio, CurrentDate, CurrentTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +59,8 @@ public class AgregarproductoActivity extends AppCompatActivity {
         descripcionpro = (EditText) findViewById(R.id.descripcionpro);
         preciopro = (EditText) findViewById(R.id.preciopro);
         agregarpro = (Button) findViewById(R.id.agregarpro);
+
+        dialog = new ProgressDialog(this);
         
         imagenpro.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,5 +97,71 @@ public class AgregarproductoActivity extends AppCompatActivity {
     }
 
     private void ValidarProducto() {
+        NombrePro= nombrepro.getText().toString();
+        Desc = descripcionpro.getText().toString();
+        Precio = preciopro.getText().toString();
+        if(imagenUri == null){
+            Toast.makeText(this, "Primero agregar una imagen", Toast.LENGTH_SHORT).show();
+        } else if (TextUtils.isEmpty((NombrePro))) {
+            Toast.makeText(this, "Debes agregar el nombre del producto", Toast.LENGTH_SHORT).show();
+        }else if (TextUtils.isEmpty((Desc))) {
+            Toast.makeText(this, "Debes ingresar las descripcion del producto", Toast.LENGTH_SHORT).show();
+        }else if (TextUtils.isEmpty((Precio))) {
+            Toast.makeText(this, "Debes ingresar el precio del producto", Toast.LENGTH_SHORT).show();
+        }else {
+            GuardarInformacion();
+        }
+    }
+
+    private void GuardarInformacion() {
+        dialog.setTitle("Guardando producto");
+        dialog.setMessage("por favor espere mientras guardamos el producto");
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat currentDateFormat = new SimpleDateFormat("MM-dd-yy");
+        CurrentDate = currentDateFormat.format(calendar.getTime());
+
+        productoRandonKey = CurrentDate + CurrentTime;
+
+        final StorageReference filePath = ProductoImagenRef.child(imagenUri.getLastPathSegment() + productoRandonKey + ".jpg");
+        final UploadTask ulploadTask = filePath.putFile(imagenUri);
+
+        ulploadTask.addOnFailureListener(new OnFailureListener() {
+
+
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                String mensaje = e.toString();
+
+                Toast.makeText(AgregarproductoActivity.this, "Erro:" +mensaje , Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(AgregarproductoActivity.this, "Imagen guardada exitosamente", Toast.LENGTH_SHORT).show();
+
+                Task<Uri> uriTask = ulploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if(!task.isSuccessful()){
+                            throw task.getException();
+                        }
+
+                        return null;
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if(task.isSuccessful()){
+                            
+                        }
+                    }
+                })
+            }
+        })
     }
 }

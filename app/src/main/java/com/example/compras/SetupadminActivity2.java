@@ -1,32 +1,27 @@
 package com.example.compras;
 
-import static android.app.Activity.RESULT_OK;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -35,12 +30,11 @@ import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+public class SetupadminActivity2 extends AppCompatActivity {
 
-public class FragmentTres extends Fragment {
-
-    private View fragmento;
     private EditText nombre, ciudad, direccion, telefono;
     private Button guardar;
+    private String phone = "";
     private CircleImageView imagen;
     private FirebaseAuth auth;
     private DatabaseReference UserRef;
@@ -48,66 +42,33 @@ public class FragmentTres extends Fragment {
     private String CurrentUserId;
     private static int Galery_Pick = 1;
     private StorageReference UserImagenPerfil;
-
-    public FragmentTres() {
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        fragmento=inflater.inflate(R.layout.fragment_tres, container, false);
-
-        auth = FirebaseAuth.getInstance();
-        nombre = fragmento.findViewById(R.id.perfilF_nombre);
-        ciudad = fragmento.findViewById(R.id.perfilF_ciudad);
-        direccion = fragmento.findViewById(R.id.perfilF_direccion);
-        telefono = fragmento.findViewById(R.id.perfilF_telefono);
-        CurrentUserId = auth.getCurrentUser().getUid();
-        UserRef = FirebaseDatabase.getInstance().getReference().child("Admin");
-        dialog = new ProgressDialog(getContext());
-        UserImagenPerfil = FirebaseStorage.getInstance().getReference().child("Perfil");
-        guardar = fragmento.findViewById(R.id.perfilF_boton);
-        imagen = fragmento.findViewById(R.id.perfilF_imagen);
-
-        UserRef.child(CurrentUserId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                if(snapshot.exists() && snapshot.hasChild("imagen")){
-                    String nombreS = snapshot.child("nombre").getValue().toString();
-                    String direccionS = snapshot.child("direccion").getValue().toString();
-                    String ciudadS = snapshot.child("ciudad").getValue().toString();
-                    String telefonoS = snapshot.child("telefono").getValue().toString();
-                    String imagenS = snapshot.child("imagen").getValue().toString();
-                    Picasso.get()
-                            .load(imagenS)
-                            .placeholder(R.drawable.logo)
-                            .into(imagen);
-
-                    nombre.setText(nombreS);
-                    direccion.setText(direccionS);
-                    ciudad.setText(ciudadS);
-                    telefono.setText(telefonoS);
-                }else if(snapshot.exists()){
-                    String nombreS = snapshot.child("nombre").getValue().toString();
-                    String direccionS = snapshot.child("direccion").getValue().toString();
-                    String ciudadS = snapshot.child("ciudad").getValue().toString();
-                    String telefonoS = snapshot.child("telefono").getValue().toString();
-                    String imagenS = snapshot.child("imagen").getValue().toString();
-                    nombre.setText(nombreS);
-                    direccion.setText(direccionS);
-                    ciudad.setText(ciudadS);
-                    telefono.setText(telefonoS);
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_setupadmin2);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
         });
 
+        auth = FirebaseAuth.getInstance();
+        nombre = findViewById(R.id.asetup_nombre);
+        ciudad = findViewById(R.id.asetup_ciudad);
+        direccion = findViewById(R.id.asetup_direccion);
+        telefono = findViewById(R.id.asetup_telefono);
+        CurrentUserId = auth.getCurrentUser().getUid();
+        UserRef = FirebaseDatabase.getInstance().getReference().child("Admin");
+        dialog = new ProgressDialog(this);
+        UserImagenPerfil = FirebaseStorage.getInstance().getReference().child("Perfil");
+        guardar = findViewById(R.id.asetup_boton);
+        imagen = findViewById(R.id.asetup_imagen);
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            phone = bundle.getString("phone");
+        }
 
         guardar.setOnClickListener(view -> GuardarInformacion());
 
@@ -117,12 +78,10 @@ public class FragmentTres extends Fragment {
             intent.setType("image/*"); // Cambié la línea a "image/*"
             startActivityForResult(intent, Galery_Pick);
         });
-
-        return fragmento;
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Verifica que el código de la solicitud sea el esperado y que la imagen esté seleccionada
@@ -149,14 +108,14 @@ public class FragmentTres extends Fragment {
                                 dialog.dismiss();
                             } else {
                                 String mensaje = task1.getException().getMessage();
-                                Toast.makeText(getContext(), "Error: " + mensaje, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SetupadminActivity2.this, "Error: " + mensaje, Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                             }
                         });
                     });
                 } else {
                     String mensaje = task.getException().getMessage();
-                    Toast.makeText(getContext(), "Error al subir la imagen: " + mensaje, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SetupadminActivity2.this, "Error al subir la imagen: " + mensaje, Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 }
             });
@@ -170,16 +129,16 @@ public class FragmentTres extends Fragment {
         String phones = telefono.getText().toString();
 
         if(TextUtils.isEmpty(nombres)){
-            Toast.makeText(getContext(), "Ingrese el nombre.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Ingrese el nombre.", Toast.LENGTH_SHORT).show();
         }
         if(TextUtils.isEmpty(direccions)){
-            Toast.makeText(getContext(), "Ingrese la direccion.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Ingrese la direccion.", Toast.LENGTH_SHORT).show();
         }
         if(TextUtils.isEmpty(ciudads)){
-            Toast.makeText(getContext(), "Ingrese la ciudad.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Ingrese la ciudad.", Toast.LENGTH_SHORT).show();
         }
         if(TextUtils.isEmpty(phones)){
-            Toast.makeText(getContext(), "Ingrese su número.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Ingrese su número.", Toast.LENGTH_SHORT).show();
         }else{
             dialog.setTitle("Guardando");
             dialog.setMessage("Por favor espere...");
@@ -201,7 +160,7 @@ public class FragmentTres extends Fragment {
                         dialog.dismiss();
                     }else{
                         String mensaje = task.getException().toString();
-                        Toast.makeText(getContext(), "Error: "+mensaje, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SetupadminActivity2.this, "Error: "+mensaje, Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
                 }
@@ -210,8 +169,10 @@ public class FragmentTres extends Fragment {
     }
 
     private void EnviarAlInicio() {
-        Intent intent = new Intent(getContext(), AdminActivity.class);
+        Intent intent = new Intent(SetupadminActivity2.this, AdminActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+        finish();
+
     }
 }

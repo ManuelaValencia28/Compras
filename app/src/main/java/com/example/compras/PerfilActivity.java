@@ -1,23 +1,21 @@
 package com.example.compras;
 
-import static android.app.Activity.RESULT_OK;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -35,10 +33,8 @@ import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+public class PerfilActivity extends AppCompatActivity {
 
-public class FragmentTres extends Fragment {
-
-    private View fragmento;
     private EditText nombre, ciudad, direccion, telefono;
     private Button guardar;
     private CircleImageView imagen;
@@ -49,26 +45,28 @@ public class FragmentTres extends Fragment {
     private static int Galery_Pick = 1;
     private StorageReference UserImagenPerfil;
 
-    public FragmentTres() {
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        fragmento=inflater.inflate(R.layout.fragment_tres, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_perfil);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         auth = FirebaseAuth.getInstance();
-        nombre = fragmento.findViewById(R.id.perfilF_nombre);
-        ciudad = fragmento.findViewById(R.id.perfilF_ciudad);
-        direccion = fragmento.findViewById(R.id.perfilF_direccion);
-        telefono = fragmento.findViewById(R.id.perfilF_telefono);
+        nombre = findViewById(R.id.perfil_nombre);
+        ciudad = findViewById(R.id.perfil_ciudad);
+        direccion = findViewById(R.id.perfil_direccion);
+        telefono = findViewById(R.id.perfil_telefono);
         CurrentUserId = auth.getCurrentUser().getUid();
-        UserRef = FirebaseDatabase.getInstance().getReference().child("Admin");
-        dialog = new ProgressDialog(getContext());
+        UserRef = FirebaseDatabase.getInstance().getReference().child("Usuarios");
+        dialog = new ProgressDialog(this);
         UserImagenPerfil = FirebaseStorage.getInstance().getReference().child("Perfil");
-        guardar = fragmento.findViewById(R.id.perfilF_boton);
-        imagen = fragmento.findViewById(R.id.perfilF_imagen);
+        guardar = findViewById(R.id.perfil_boton);
+        imagen = findViewById(R.id.perfil_imagen);
 
         UserRef.child(CurrentUserId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -117,12 +115,10 @@ public class FragmentTres extends Fragment {
             intent.setType("image/*"); // Cambié la línea a "image/*"
             startActivityForResult(intent, Galery_Pick);
         });
-
-        return fragmento;
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Verifica que el código de la solicitud sea el esperado y que la imagen esté seleccionada
@@ -149,14 +145,14 @@ public class FragmentTres extends Fragment {
                                 dialog.dismiss();
                             } else {
                                 String mensaje = task1.getException().getMessage();
-                                Toast.makeText(getContext(), "Error: " + mensaje, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PerfilActivity.this, "Error: " + mensaje, Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                             }
                         });
                     });
                 } else {
                     String mensaje = task.getException().getMessage();
-                    Toast.makeText(getContext(), "Error al subir la imagen: " + mensaje, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PerfilActivity.this, "Error al subir la imagen: " + mensaje, Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 }
             });
@@ -170,16 +166,16 @@ public class FragmentTres extends Fragment {
         String phones = telefono.getText().toString();
 
         if(TextUtils.isEmpty(nombres)){
-            Toast.makeText(getContext(), "Ingrese el nombre.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Ingrese el nombre.", Toast.LENGTH_SHORT).show();
         }
         if(TextUtils.isEmpty(direccions)){
-            Toast.makeText(getContext(), "Ingrese la direccion.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Ingrese la direccion.", Toast.LENGTH_SHORT).show();
         }
         if(TextUtils.isEmpty(ciudads)){
-            Toast.makeText(getContext(), "Ingrese la ciudad.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Ingrese la ciudad.", Toast.LENGTH_SHORT).show();
         }
         if(TextUtils.isEmpty(phones)){
-            Toast.makeText(getContext(), "Ingrese su número.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Ingrese su número.", Toast.LENGTH_SHORT).show();
         }else{
             dialog.setTitle("Guardando");
             dialog.setMessage("Por favor espere...");
@@ -201,7 +197,7 @@ public class FragmentTres extends Fragment {
                         dialog.dismiss();
                     }else{
                         String mensaje = task.getException().toString();
-                        Toast.makeText(getContext(), "Error: "+mensaje, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PerfilActivity.this, "Error: "+mensaje, Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
                 }
@@ -210,8 +206,10 @@ public class FragmentTres extends Fragment {
     }
 
     private void EnviarAlInicio() {
-        Intent intent = new Intent(getContext(), AdminActivity.class);
+        Intent intent = new Intent(PerfilActivity.this, PrincipalActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+        finish();
     }
+
 }

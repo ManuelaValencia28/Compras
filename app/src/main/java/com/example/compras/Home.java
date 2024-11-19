@@ -31,7 +31,7 @@ public class Home extends AppCompatActivity {
         botonadmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Home.this, AdminActivity.class);
+                Intent intent = new Intent(Home.this, LoginAdmin.class);
                 startActivity(intent);
             }
         });

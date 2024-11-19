@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
@@ -28,11 +29,14 @@ import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class AgregarproductoActivity extends AppCompatActivity {
 
     private ImageView imagenpro;
-    private EditText nombrepro, descripcionpro, preciopro;
+    private EditText nombrepro, descripcionpro, preciocomprapro, precioventapro, cantidadpro;
+    private TextView textox;
     private Button agregarpro;
     private static final int Gallery_Pick = 1;
     private Uri imagenUri;
@@ -40,7 +44,7 @@ public class AgregarproductoActivity extends AppCompatActivity {
     private StorageReference ProductoImagenRef;
     private DatabaseReference ProductoRef;
     private ProgressDialog dialog;
-    private String Categoria, NombrePro, Desc, Precio, CurrentDate, CurrentTime;
+    private String Categoria, NombrePro, Desc, PrecioCom, PrecioVen, Cant, CurrentDate, CurrentTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +57,13 @@ public class AgregarproductoActivity extends AppCompatActivity {
 
         Toast.makeText(this, Categoria,Toast.LENGTH_SHORT).show();
 
-
+        textox = (TextView) findViewById(R.id.textox);
         imagenpro = (ImageView) findViewById(R.id.imagenpro);
         nombrepro = (EditText) findViewById(R.id.nombrepro);
         descripcionpro = (EditText) findViewById(R.id.descripcionpro);
-        preciopro = (EditText) findViewById(R.id.preciopro);
+        preciocomprapro = (EditText) findViewById(R.id.preciocomprapro);
+        precioventapro = (EditText) findViewById(R.id.precioventapro);
+        cantidadpro = (EditText) findViewById(R.id.cantidadpro);
         agregarpro = (Button) findViewById(R.id.agregarpro);
 
         dialog = new ProgressDialog(this);
@@ -74,6 +80,7 @@ public class AgregarproductoActivity extends AppCompatActivity {
                 ValidarProducto();
             }
         });
+        textox.setText(Categoria+"\nAGREGAR PRODUCTO");
 
     }
 
@@ -99,15 +106,21 @@ public class AgregarproductoActivity extends AppCompatActivity {
     private void ValidarProducto() {
         NombrePro= nombrepro.getText().toString();
         Desc = descripcionpro.getText().toString();
-        Precio = preciopro.getText().toString();
+        PrecioCom = preciocomprapro.getText().toString();
+        PrecioVen = precioventapro.getText().toString();
+        Cant = cantidadpro.getText().toString();
         if(imagenUri == null){
             Toast.makeText(this, "Primero agregar una imagen", Toast.LENGTH_SHORT).show();
         } else if (TextUtils.isEmpty((NombrePro))) {
             Toast.makeText(this, "Debes agregar el nombre del producto", Toast.LENGTH_SHORT).show();
         }else if (TextUtils.isEmpty((Desc))) {
             Toast.makeText(this, "Debes ingresar las descripcion del producto", Toast.LENGTH_SHORT).show();
-        }else if (TextUtils.isEmpty((Precio))) {
-            Toast.makeText(this, "Debes ingresar el precio del producto", Toast.LENGTH_SHORT).show();
+        }else if (TextUtils.isEmpty((PrecioCom))) {
+            Toast.makeText(this, "Debes ingresar el precio de compra del producto", Toast.LENGTH_SHORT).show();
+        }else if (TextUtils.isEmpty((PrecioVen))) {
+            Toast.makeText(this, "Debes ingresar el precio de venta del producto", Toast.LENGTH_SHORT).show();
+        }else if (TextUtils.isEmpty((Cant))) {
+            Toast.makeText(this, "Debes ingresar la cantidad de productos", Toast.LENGTH_SHORT).show();
         }else {
             GuardarInformacion();
         }
@@ -150,18 +163,53 @@ public class AgregarproductoActivity extends AppCompatActivity {
                         if(!task.isSuccessful()){
                             throw task.getException();
                         }
-
-                        return null;
+                        downloadUri = filePath.getDownloadUrl().toString();
+                        return filePath.getDownloadUrl();
                     }
                 }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
                         if(task.isSuccessful()){
-                            
+                            downloadUri = task.getResult().toString();
+                            Toast.makeText(AgregarproductoActivity.this, "Imagen guardada en Firebase.", Toast.LENGTH_SHORT).show();
+                            GuardarEnFirebase();
+                        }else{
+                            Toast.makeText(AgregarproductoActivity.this, "Error...", Toast.LENGTH_SHORT).show();
                         }
                     }
-                })
+                });
             }
-        })
+        });
+    }
+
+    private void GuardarEnFirebase() {
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("pid",productoRandonKey);
+        map.put("fecha", CurrentDate);
+        map.put("fecha", CurrentTime);
+        map.put("descripcion", Desc);
+        map.put("nombre", NombrePro);
+        map.put("preciocom", PrecioCom);
+        map.put("precioven", PrecioVen);
+        map.put("cantidad", Cant);
+        map.put("imagen", downloadUri);
+        map.put("categoria", Categoria);
+
+        ProductoRef.child(productoRandonKey).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Intent intent = new Intent(AgregarproductoActivity.this, AdminActivity.class);
+                    startActivity(intent);
+                    dialog.dismiss();
+                    Toast.makeText(AgregarproductoActivity.this, "Solicitud Exitosa.", Toast.LENGTH_SHORT).show();
+                }else{
+                    dialog.dismiss();
+                    String mensaje = task.getException().toString();
+                    Toast.makeText(AgregarproductoActivity.this, "Error"+mensaje, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

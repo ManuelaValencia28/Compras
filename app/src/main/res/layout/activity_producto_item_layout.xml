@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".producto_item_layout"
+    android:layout_marginTop="20dp"
+    android:layout_marginRight="15dp"
+    android:layout_marginLeft="15dp"
+    android:layout_marginBottom="15dp"
+    android:orientation="vertical"
+    app:cardElevation="15dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/textos">
+
+        <TextView
+            android:id="@+id/nombre_producto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="NOMBRE DEL PRODUCTO"
+            android:textAlignment="center"
+            android:textSize="20dp"
+            android:textColor="@color/black"
+            android:textStyle="bold|italic"/>
+        <ImageView
+            android:id="@+id/imagen_producto"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_below="@+id/nombre_producto"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="2dp"/>
+        <TextView
+            android:id="@+id/descripcion_producto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imagen_producto"
+            android:text="Descripcion del producto"
+            android:textSize="16dp"
+            android:textAlignment="center"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/precio_producto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/descripcion_producto"
+            android:text="PRECIO"
+            android:textSize="18dp"
+            android:layout_marginTop="2dp"
+            android:textAlignment="center"
+            android:textColor="@color/black" />
+
+
+
+
+    </RelativeLayout>
+
+
+
+</androidx.cardview.widget.CardView>

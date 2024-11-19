@@ -35,6 +35,8 @@ public class LoginAdmin extends AppCompatActivity {
     private FirebaseAuth auth;
     private ProgressDialog dialog;
     private String phoneNumber;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,13 +62,13 @@ public class LoginAdmin extends AppCompatActivity {
                     dialog.show();
                     dialog.setCanceledOnTouchOutside(true);
                     PhoneAuthOptions options = PhoneAuthOptions.newBuilder(auth)
-                            .setPhoneNumber(phoneNumber)
+                            .setPhoneNumber(phoneNumber) // Asegúrate de incluir el código de país
                             .setTimeout(60L, TimeUnit.SECONDS)
                             .setActivity(LoginAdmin.this)
                             .setCallbacks(callbacks)
                             .build();
 
-                    PhoneAuthProvider.verifyPhoneNumber(options); //Este metodo envia el numero...
+                    PhoneAuthProvider.verifyPhoneNumber(options);
                 }
             }
         });

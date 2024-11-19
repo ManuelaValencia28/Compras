@@ -69,7 +69,7 @@
         android:background="@drawable/textos"/>
 
     <Button
-        android:id="@+id/agregaerpro"
+        android:id="@+id/agregarpro"
         android:layout_width="500dp"
         android:layout_height="50dp"
         android:layout_below="@id/preciopro"
